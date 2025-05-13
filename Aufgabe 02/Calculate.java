@@ -21,35 +21,44 @@ public class Calculate {
 
         final double VOLTAGE = 233.0;
         final double CURRENT = 9.1;
-        System.out.println("Spannung: " + VOLTAGE + "V");
+        System.out.println("    Spannung: " + VOLTAGE + "V");
         System.out.println("Stromstaerke: " + CURRENT + "A");
         System.out.println(); // ! Leerzeile
 
         // 2. Variable für Leistung
 
         float pwr = (float) (VOLTAGE * CURRENT);
-        System.out.println("Leistung: " + pwr + "W");
+        System.out.println("    Leistung: " + pwr + "W");
 
         // 3. Berechnung der Energie
 
         int time = 12;
 
         // 3.1 Ausgeben der Energie als Zahl mit max zwei Nachkommastellen: 
-        // 3.1.1 Energie als ganze Zahl berechenen 
-        int energyWholeNumber = (int) (pwr * time) / 1000;
-        System.out.println("energyWholeNumber" + energyWholeNumber);
+        // 3.1.1 Energie als Zahl mit allen Nachkommastellen berechenen 
+        double energyWithAllDecimals = (pwr * time) / 1000; // * Nein, das ist nicht KI Generiert, ich benenne meine Variablen tatsächlich so eigentümlich :D
+        // System.out.println("Energy with all decimals: " + energyWithAllDecimals);
 
-        // 3.1.2 Dezimalstellen als ganze Zahl berechen 
-        int energyDecimalsAsWhole = (int) ((pwr * time) % 1000 / 10); // * Nein, das ist nicht KI Generiert, ich benenne meine Variablen tatsächlich so eigentümlich :D
+        // 3.1.2 Ganze Zahlen extrahieren (Vorkommastellen)
+        int energyWholeNumber = (int) (energyWithAllDecimals);
+        // System.out.println("energyWholeNumber" + energyWholeNumber);
 
-        // 3.1.3 
-        double energyDecimals = energyDecimalsAsWhole / 100.0; // ! 100.0 muss hier explizit als Double geschrieben werden, da Java bei der Division sonst in Form von<int> ausgiebt
-        double energy = energyWholeNumber + energyDecimals;
+        // 3.1.3 Verschieben des Komma's um zwei Stellen
+        int energyDecimalsPre = (int) (energyWithAllDecimals * 100);
+        // System.out.println("Energy Decimals Precursor: " + energyDecimalsPre);
 
-        // System.out.println("energyWholeNumber: " + energyWholeNumber);
+        // 3.1.4 Extrahieren der letzten beiden Stellen mit Modulo 
+        double energyDecimalsAsWhole = (energyDecimalsPre % 100);
+
+        // 3.1.5 Umwanndeln der ganzen Zahl in eine Nachkkommstelle  
+        double energyDecimals = energyDecimalsAsWhole / 100.0; // ! 100.0 muss hier explizit <100> als Double geschrieben werden, da Java bei der Division sonst als <int> ausgiebt
+
+        // 3.1.6 Zusammenfügen der ganzen Zahl und der Nachkommstalle 
+        float energy = (float) (energyWholeNumber + energyDecimals);
+
         // System.out.println("energyDecimalsAsWholeNumber: " + energyDecimalsAsWhole);
         // System.out.println("energyDecimals: " + energyDecimals);
 
-        System.out.println("Energie 12h: " + energy + "kWh");
+        System.out.println(" Energie 12h: " + energy + "kWh");
     }
 }
