@@ -8,8 +8,6 @@
  * 
  */
 
-import java.util.Arrays;
-
 public class Measurement {
 
     public static void main(String[] args) {
@@ -22,6 +20,7 @@ public class Measurement {
 
         Measurement.createDecimalDays(args);
         Measurement.visualizeTheoreticalPower(args);
+        Measurement.visualizeActualPower(args); 
     }
 
     //! Globale Variablen:
@@ -69,14 +68,14 @@ public class Measurement {
         }
 
         //* Komplettes Array anzeigen:
-        System.out.print("Dezimaltage: [");
-        for (int i = 0; i < decimalDays.length; i++) {
-            System.out.print(decimalDays[i]);
-            if (i < decimalDays.length - 1) {
-                System.out.print(", ");
-            }
-        }
-        System.out.println("]");
+        // System.out.print("Dezimaltage: [");
+        // for (int i = 0; i < decimalDays.length; i++) {
+        //     System.out.print(decimalDays[i]);
+        //     if (i < decimalDays.length - 1) {
+        //         System.out.print(", ");
+        //     }
+        // }
+        // System.out.println("]");
 
         return decimalDays;
 
@@ -86,13 +85,27 @@ public class Measurement {
 
         PanelData power = new PanelData(args);
 
+        // Array mit DezimalTagen durchlaufen und für jeden die theoretische Leistung ausgeben 
         for (double decimalDay : decimalDays) {
             // System.out.println(decimalDay);
             double theoreticalPower = power.getPower(decimalDay);
-    
-            System.out.println("Theoretische Leistung: " + theoreticalPower);
-    
+
+            // System.out.println("Theoretische Leistung am Dezimaltag " + decimalDay +": " + (Math.round(theoreticalPower * 100.0)/100.0) + "");
+
             ResultPrinter.sendPower(decimalDay, theoreticalPower);
+        }
+
+    }
+
+    public static void visualizeActualPower(String[] args) {
+
+
+        // 1. Messwerte auslesen -> Für jeden Dezimaltag t gibt es ein t_0 und ein t_1. Für jedes t_0 gibt es ein y_0 und für jedes t_1 gitb es ein y_1. Zwischen diesen beiden werten muss interpoliert werden 
+        // 1.1 exakte Zeitpunkte der Messwerte auslesen 
+
+        for (double decimalDay : decimalDays) { 
+            
+
         }
 
         
