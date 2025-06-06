@@ -103,8 +103,26 @@ public class Measurement {
         // 1. Messwerte auslesen -> Für jeden Dezimaltag t gibt es ein t_0 und ein t_1. Für jedes t_0 gibt es ein y_0 und für jedes t_1 gitb es ein y_1. Zwischen diesen beiden werten muss interpoliert werden 
         // 1.1 exakte Zeitpunkte der Messwerte auslesen 
 
+        // DataPoint dataPoint_1 = SunCalculator.getPrevious(SunCalculator.SOLAR, 293.0); 
+        // System.out.println(dataPoint_1);
+
+        // double dcimalDay_1 = dataPoint_1.getDecimalDay(); 
+        // System.out.println(dcimalDay_1);
+
+        // double value_1 = dataPoint_1.getValue(); 
+        // System.out.println(value_1);
         for (double decimalDay : decimalDays) { 
             
+            // Letzer Datenpunkt vor dem Dezimaltag auslesen #
+            DataPoint previousDataPoint = SunCalculator.getPrevious(SunCalculator.SOLAR, decimalDay); 
+            // System.out.println("Vorheriger Datenpunkt: " + previousDataPoint);
+
+            // Aus dem Vorherigen Datenpunkt Decimaltag und Wert auslesen 
+            double previousDecimalDay = previousDataPoint.getDecimalDay(); 
+            System.out.println("Dezimaltag des vorherigen Datenpunktes: " + previousDecimalDay);
+
+            double previousValue = previousDataPoint.getValue(); 
+            System.out.println("Leistung des vorherigen Datenpunktes: " + previousValue);
 
         }
 
