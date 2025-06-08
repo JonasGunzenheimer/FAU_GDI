@@ -38,6 +38,22 @@ public class SolarEnergy {
         return interpolatedValue; 
     }
 
+    public static double calculateColorAngle(double netPower, double minUsage, double solarPower) {
+
+        if (netPower = minUsage) {
+            return 360.0; 
+        }
+        if (netPower = solarPower) {
+            return 120.0; 
+        }
+
+        double normalized = (netPower - minUsage) / (solarPower - minUsage);
+
+        double colorAngle = 360 - normalized * 240;
+
+        return colorAngle;
+    }
+
     public static void main(String[] args) {
 
         /* 
@@ -76,6 +92,12 @@ public class SolarEnergy {
 
                 // System.out.println("Durchlauf Nr.: " + (entryNumber + 1));
                 zaehlvariable++;
+
+                /* 
+                * ===========================================================================================
+                * INTERPOLIERTEN WERT BERECHNEN
+                * ===========================================================================================
+                */
                 double interpolatedSolarValue =  SolarEnergy.getInterpolated(SunCalculator.SOLAR, currentDecimalDay); 
                 System.out.println("Interpolierter Solar Wert: " + interpolatedSolarValue);
                 ResultPrinter.sendSolarProduction(currentDecimalDay, interpolatedSolarValue); 
@@ -83,6 +105,19 @@ public class SolarEnergy {
                 System.out.println("Interpolierter Usage Wert: " + interpolatedUsageValue);
                 ResultPrinter.sendUsage(currentDecimalDay, interpolatedUsageValue); 
 
+                
+                /* 
+                * ===========================================================================================
+                * NET POWER BERECHNEN UND SENDEN 
+                * ===========================================================================================
+                */
+                
+                double netPower = interpolatedSolarValue - interpolatedUsageValue; 
+                double colorAngle = SolarEnergy.calculateColorAngle(netPower, -1 * interpolatedUsageValue , interpolatedSolarValue ); 
+                ResultPrinter.sendNetPower(currentDecimalDay, netPower, colorAngle); 
+
+
+                
             }
 
             HourOfDay++;
