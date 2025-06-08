@@ -8,9 +8,6 @@
  * 
  */
 
-import java.security.MessageDigest;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
 
 public class Measurement {
 
@@ -169,6 +166,12 @@ public class Measurement {
             double t = decimalDay;
             double t_0 = (double) dataPoints[entryNumber][0];
             double t_1 = (double) dataPoints[entryNumber + 1][0];
+
+            if (t_0 < 0 || t_1 < 0) {
+                System.out.println("Ungeültigen Wert erkannt! t_0 = " + t_0 + ". t_1 = " + t_1 + ".");
+                counter++; 
+                continue; 
+            }
 
             if (t > t_0 && t >= t_1) {
                 entryNumber++;
