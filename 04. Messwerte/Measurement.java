@@ -14,13 +14,13 @@ public class Measurement {
         final int DELTA_MINUTE = 20;
 
         /*
-        * =======================================================
         * AB HIER KOPIEREN 
+        * ==============================================================================================================
         */
 
         Measurement.createDecimalDays(args);
         Measurement.visualizeTheoreticalPower(args);
-        Measurement.visualizeActualPower(args); 
+        Measurement.visualizeActualPower(args);
     }
 
     //! Globale Variablen:
@@ -111,24 +111,34 @@ public class Measurement {
 
         // double value_1 = dataPoint_1.getValue(); 
         // System.out.println(value_1);
-        for (double decimalDay : decimalDays) { 
+        // Aus dem Vorherigen Datenpunkt Decimaltag und Wert auslesen 
+        double previousDecimalDay = previousDataPoint.getDecimalDay(); 
+        System.out.println("Dezimaltag des vorherigen Datenpunktes: " + previousDecimalDay);
+
+        double previousValue = previousDataPoint.getValue(); 
+        System.out.println("Leistung des vorherigen Datenpunktes: " + previousValue);
+        
+        public static double[] getSolarDataPoints(String[] args) {
             
-            // Letzer Datenpunkt vor dem Dezimaltag auslesen #
-            DataPoint previousDataPoint = SunCalculator.getPrevious(SunCalculator.SOLAR, decimalDay); 
-            // System.out.println("Vorheriger Datenpunkt: " + previousDataPoint);
+            // Alle Datenpunkte in ein ARray laden um besser damit rechnen zu können
+            // An sich müssen für alle Messerwrte (auser letzten) die Folowing nicht gelsen werden. Die Previous des näöchsten sind die Following des letzten 
+            
+            
+            for (double decimalDay : decimalDays) { 
+                
+                // Letzer Datenpunkt vor dem Dezimaltag auslesen #
+                DataPoint previousDataPoint = SunCalculator.getPrevious(SunCalculator.SOLAR, decimalDay); 
+                // System.out.println("Vorheriger Datenpunkt: " + previousDataPoint);
+            }
 
-            // Aus dem Vorherigen Datenpunkt Decimaltag und Wert auslesen 
-            double previousDecimalDay = previousDataPoint.getDecimalDay(); 
-            System.out.println("Dezimaltag des vorherigen Datenpunktes: " + previousDecimalDay);
-
-            double previousValue = previousDataPoint.getValue(); 
-            System.out.println("Leistung des vorherigen Datenpunktes: " + previousValue);
-
+            // following data point des letzten Dezimaltages auslesen 
         }
+
+        //! Anschließend können mit einer weiteren Methode die im Array gespeicherten Datenpunkte ausgelesen und verarbeitet (interpolation) werden. Die vizualizeActualPower MEthode kümmert sich dann nur noch ium das senden 
 
         
         /*
-        * =======================================================
+        * ==============================================================================================================
         * BIS HIER KOPIEREN 
         */
         
