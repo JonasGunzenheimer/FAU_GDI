@@ -17,7 +17,35 @@ public class SolarEnergy {
         return interpolatedValue; 
     }
 
+    public static double getInterpolated(int type, double decimalDay) { 
+
+        DataPoint previousDataPoint = SunCalculator.getPrevious(type, decimalDay);
+        // System.out.println("Vorheriger DataPoint:" + previousDataPoint);
+        DataPoint followingDataPoint = SunCalculator.getFollowing(type, decimalDay);
+        // System.out.println("Nachfolgender DataPoint:" + followingDataPoint);
+
+        double t = decimalDay; 
+        double previous_t_0 = previousDataPoint.getDecimalDay(); 
+        double previous_t_1 = followingDataPoint.getDecimalDay();
+
+        double lambda = SolarEnergy.calculateFactor(t, previous_t_0, previous_t_1); 
+
+        double previous_y_0 = previousDataPoint.getValue();
+        double previous_y_1 = followingDataPoint.getValue();
+
+        double interpolatedValue = SolarEnergy.interpolate(lambda, previous_y_0, previous_y_1); 
+
+        return interpolatedValue; 
+    }
+
     public static void main(String[] args) {
+
+        /* 
+         * ==============================================================================================================
+         * DEZIMALTAG BERECHENEN 
+         * ==============================================================================================================
+         */
+
         // Deklarieren der Variablen für HourOfDay und MinuteOfHour 
         int HourOfDay = 0;
         int MinuteOfHour = 0;
@@ -48,6 +76,12 @@ public class SolarEnergy {
 
                 // System.out.println("Durchlauf Nr.: " + (entryNumber + 1));
                 zaehlvariable++;
+                double interpolatedSolarValue =  SolarEnergy.getInterpolated(SunCalculator.SOLAR, currentDecimalDay); 
+                System.out.println("Interpolierter Solar Wert: " + interpolatedSolarValue);
+                ResultPrinter.sendSolarProduction(currentDecimalDay, interpolatedSolarValue); 
+                double interpolatedUsageValue =  SolarEnergy.getInterpolated(SunCalculator.USAGE, currentDecimalDay); 
+                System.out.println("Interpolierter Usage Wert: " + interpolatedUsageValue);
+                ResultPrinter.sendUsage(currentDecimalDay, interpolatedUsageValue); 
 
             }
 
@@ -65,56 +99,5 @@ public class SolarEnergy {
         }
         System.out.println("]");
 
-        DataPoint currentDataPoint = null;
-
-        currentDataPoint = SunCalculator.getPrevious(SunCalculator.SOLAR, decimalDays[0]);
-        // System.out.println("Derzeitiger Datenpunkt: " + currentDataPoint);
-
-        dataPoints[0] = new Object[] { currentDataPoint.getDecimalDay(), currentDataPoint.getValue() };
-
-        // System.out.println("Tatsächlicher Dezimaltag: " + (double) dataPoints[0][0]);
-        // System.out.println("Tatsächlicher Wert: " + (double) dataPoints[0][1]);
-
-        int DecimalDayEntryNumber = 1;
-        for (double decimalDay : decimalDays) {
-            // Zeigt den vorherigen (bereits geladenen) Datenpunkt
-            // System.out.println("Dezimaltag im Datenpunkt: " + (double) dataPoints[entryNumber - 1][0]); 
-
-            if (decimalDay < (double) dataPoints[DecimalDayEntryNumber - 1][0]) {
-                // System.out.println("Dezimaltag wird uebersprungen! ");
-                continue;
-            }
-
-            currentDataPoint = SunCalculator.getFollowing(SunCalculator.SOLAR, decimalDay);
-            dataPoints[DecimalDayEntryNumber] = new Object[] { currentDataPoint.getDecimalDay(),
-                    currentDataPoint.getValue() };
-
-            DecimalDayEntryNumber++;
-        }
-
-        int counter = 0;
-        int entryNumber = 0;
-        int decimalDayNumber = 0;
-
-        for (double decimalDay : decimalDays) {
-
-            System.out.println("Anzhal der Schleifendurchlaeufe: " + counter);
-            double t = decimalDay;
-            double t_0 = (double) dataPoints[entryNumber][0];
-            double t_1 = (double) dataPoints[entryNumber + 1][0];
-
-            if (t_0 < 0 || t_1 < 0) {
-                // System.out.println("Ungeültigen Wert erkannt! t_0 = " + t_0 + ". t_1 = " + t_1 + ".");
-                counter++;
-                continue;
-            }
-
-            if (t > t_0 && t >= t_1) {
-                entryNumber++;
-                t_0 = (double) dataPoints[entryNumber][0];
-                t_1 = (double) dataPoints[entryNumber + 1][0];
-            }
-            counter++;
-        }
     }
 }
