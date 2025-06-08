@@ -143,8 +143,8 @@ public class Measurement {
         //     }
         // }
 
-        System.out.println("]");
-        System.out.println("Anzahl der Datenpunkten: " + entryNumber);
+        // System.out.println("]");
+        // System.out.println("Anzahl der Datenpunkten: " + entryNumber);
 
         //! Anschließend können mit einer weiteren Methode die im Array gespeicherten Datenpunkte ausgelesen und verarbeitet (interpolation) werden. Die vizualizeActualPower MEthode kümmert sich dann nur noch ium das senden 
     }
@@ -162,13 +162,13 @@ public class Measurement {
 
         for (double decimalDay : decimalDays) {
 
-            System.out.println("Anzhal der Schleifendurchlaeufe: " + counter);
+            // System.out.println("Anzhal der Schleifendurchlaeufe: " + counter);
             double t = decimalDay;
             double t_0 = (double) dataPoints[entryNumber][0];
             double t_1 = (double) dataPoints[entryNumber + 1][0];
 
             if (t_0 < 0 || t_1 < 0) {
-                System.out.println("Ungeültigen Wert erkannt! t_0 = " + t_0 + ". t_1 = " + t_1 + ".");
+                // System.out.println("Ungeültigen Wert erkannt! t_0 = " + t_0 + ". t_1 = " + t_1 + ".");
                 counter++; 
                 continue; 
             }
@@ -179,21 +179,21 @@ public class Measurement {
                 t_1 = (double) dataPoints[entryNumber + 1][0];
             }
 
-            System.out.println("t_0 = " + t_0);
-            System.out.println("t = " + t);
-            System.out.println("t_1= " + t_1);
+            // System.out.println("t_0 = " + t_0);
+            // System.out.println("t = " + t);
+            // System.out.println("t_1= " + t_1);
 
             double interpolationFactor = (t - t_0) / (t_1 - t_0);
-            System.out.println("Interpolationsfaktor: " + interpolationFactor);
+            // System.out.println("Interpolationsfaktor: " + interpolationFactor);
 
             double y_0 = (double) dataPoints[entryNumber][1];
             double y_1 = (double) dataPoints[entryNumber + 1][1];
 
             double interpolatedValue = (y_1 - y_0) * interpolationFactor + y_0;
-            System.out.println("Interpolierter Datenwert: " + interpolatedValue);
+            // System.out.println("Interpolierter Datenwert: " + interpolatedValue);
 
             ResultPrinter.sendSolarProduction(t, interpolatedValue);
-            System.out.println("Wert gesendet! ");
+            // System.out.println("Wert gesendet! ");
             counter++;
         }
         /*
