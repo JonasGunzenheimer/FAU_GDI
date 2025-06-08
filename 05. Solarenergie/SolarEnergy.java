@@ -14,42 +14,54 @@ public class SolarEnergy {
         double interpolatedValue = (y_1 - y_0) * lambda + y_0;
         // System.out.println("Interpolierter Datenwert: " + interpolatedValue);
 
-        return interpolatedValue; 
+        return interpolatedValue;
     }
 
-    public static double getInterpolated(int type, double decimalDay) { 
+    public static double getInterpolated(int type, double decimalDay) {
 
         DataPoint previousDataPoint = SunCalculator.getPrevious(type, decimalDay);
         // System.out.println("Vorheriger DataPoint:" + previousDataPoint);
         DataPoint followingDataPoint = SunCalculator.getFollowing(type, decimalDay);
         // System.out.println("Nachfolgender DataPoint:" + followingDataPoint);
 
-        double t = decimalDay; 
-        double previous_t_0 = previousDataPoint.getDecimalDay(); 
+        double t = decimalDay;
+        double previous_t_0 = previousDataPoint.getDecimalDay();
+
+        if (previous_t_0 < 0) {
+            return -1.0;
+        }
         double previous_t_1 = followingDataPoint.getDecimalDay();
 
-        double lambda = SolarEnergy.calculateFactor(t, previous_t_0, previous_t_1); 
+        if (previous_t_1 < 0) {
+            return -1.0;
+        }
+
+        double lambda = SolarEnergy.calculateFactor(t, previous_t_0, previous_t_1);
 
         double previous_y_0 = previousDataPoint.getValue();
+
         double previous_y_1 = followingDataPoint.getValue();
 
-        double interpolatedValue = SolarEnergy.interpolate(lambda, previous_y_0, previous_y_1); 
+        double interpolatedValue = SolarEnergy.interpolate(lambda, previous_y_0, previous_y_1);
 
-        return interpolatedValue; 
+        return interpolatedValue;
     }
 
     public static double calculateColorAngle(double netPower, double minUsage, double solarPower) {
 
-        if (netPower = minUsage) {
-            return 360.0; 
+        if (netPower == minUsage) {
+            return 360.0;
         }
-        if (netPower = solarPower) {
-            return 120.0; 
+        if (netPower == solarPower) {
+            return 120.0;
         }
 
-        double normalized = (netPower - minUsage) / (solarPower - minUsage);
+        // Ihre bestehenden Methoden verwenden:
+        // 1. Interpolationsfaktor berechnen
+        double lambda = calculateFactor(netPower, minUsage, solarPower);
 
-        double colorAngle = 360 - normalized * 240;
+        // 2. Zwischen 360° (minUsage) und 120° (solarPower) interpolieren
+        double colorAngle = interpolate(lambda, 360.0, 120.0);
 
         return colorAngle;
     }
@@ -77,6 +89,9 @@ public class SolarEnergy {
         // Zählvaribale für die stellen im Array 
         int zaehlvariable = 0;
 
+        double totalSolarEnergy = 0;
+        double totalUsedEnergy = 0;
+
         // Erte Schleife die die stunde hochzählt 
         for (int i = 0; i < 24; i++) {
 
@@ -98,26 +113,39 @@ public class SolarEnergy {
                 * INTERPOLIERTEN WERT BERECHNEN
                 * ===========================================================================================
                 */
-                double interpolatedSolarValue =  SolarEnergy.getInterpolated(SunCalculator.SOLAR, currentDecimalDay); 
-                System.out.println("Interpolierter Solar Wert: " + interpolatedSolarValue);
-                ResultPrinter.sendSolarProduction(currentDecimalDay, interpolatedSolarValue); 
-                double interpolatedUsageValue =  SolarEnergy.getInterpolated(SunCalculator.USAGE, currentDecimalDay); 
-                System.out.println("Interpolierter Usage Wert: " + interpolatedUsageValue);
-                ResultPrinter.sendUsage(currentDecimalDay, interpolatedUsageValue); 
+                double interpolatedSolarValue = SolarEnergy.getInterpolated(SunCalculator.SOLAR, currentDecimalDay);
+                // System.out.println("Interpolierter Solar Wert: " + interpolatedSolarValue);
+                ResultPrinter.sendSolarProduction(currentDecimalDay, interpolatedSolarValue);
+                double interpolatedUsageValue = SolarEnergy.getInterpolated(SunCalculator.USAGE, currentDecimalDay);
+                // System.out.println("Interpolierter Usage Wert: " + interpolatedUsageValue);
+                ResultPrinter.sendUsage(currentDecimalDay, interpolatedUsageValue);
 
-                
                 /* 
                 * ===========================================================================================
                 * NET POWER BERECHNEN UND SENDEN 
                 * ===========================================================================================
                 */
-                
-                double netPower = interpolatedSolarValue - interpolatedUsageValue; 
-                double colorAngle = SolarEnergy.calculateColorAngle(netPower, -1 * interpolatedUsageValue , interpolatedSolarValue ); 
-                ResultPrinter.sendNetPower(currentDecimalDay, netPower, colorAngle); 
 
+                double netPower = interpolatedSolarValue - interpolatedUsageValue;
+                // System.out.println("Interpolirerte SolarEnergy: " + netPower);
+                double colorAngle = SolarEnergy.calculateColorAngle(netPower, -1 * interpolatedUsageValue,
+                        interpolatedSolarValue);
+                ResultPrinter.sendNetPower(currentDecimalDay, netPower, colorAngle);
 
-                
+                /* 
+                * ===========================================================================================
+                * ENERGIEBERECHNUNG 
+                * ===========================================================================================
+                */
+
+                double intervalSolarPowerInKWh = (1_200.0 * interpolatedSolarValue) / 3_600_000.0;
+                // System.out.println("Intervall Solar Leistung: " + intervalSolarPowerInKWh);
+                totalSolarEnergy = totalSolarEnergy + intervalSolarPowerInKWh;
+                // System.out.println("Zwischenergebnis Solar Energie:" + totalSolarEnergy);
+                double intervalUsedPowerInKWh = (1_200.0 * interpolatedUsageValue) / 3_600_000.0;
+                // System.out.println("Intervall Solar Leistung: " + intervalUsedPowerInKWh);
+                totalUsedEnergy = totalUsedEnergy + intervalUsedPowerInKWh;
+                // System.out.println("Zwischenergebnis Used Energie:" + totalUsedEnergy);
             }
 
             HourOfDay++;
@@ -133,6 +161,11 @@ public class SolarEnergy {
             }
         }
         System.out.println("]");
+
+        ResultPrinter.sendSolarEnergy(totalSolarEnergy);
+        // System.out.println("Gesamte Solarenergie:" + totalSolarEnergy);
+        ResultPrinter.sendUsedEnergy(totalUsedEnergy);
+        // System.out.println("Gesamter Verbrauch:" + totalUsedEnergy);
 
     }
 }
