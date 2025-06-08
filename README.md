@@ -8,4 +8,4 @@ Hier können Kursteilnehmer:innen:
 - Code-Beispiele teilen
 - Gemeinsam an Programmieraufgaben arbeiten
 - Hilfestellungen geben und erhalten
-- Best Practices diskutieren
+- Best Practices diskutieren    
