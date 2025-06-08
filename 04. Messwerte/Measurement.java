@@ -8,6 +8,10 @@
  * 
  */
 
+import java.security.MessageDigest;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 public class Measurement {
 
     public static void main(String[] args) {
@@ -20,8 +24,9 @@ public class Measurement {
 
         Measurement.createDecimalDays(args);
         Measurement.visualizeTheoreticalPower(args);
-        Measurement.visualizeActualPower(args);
         Measurement.getSolarDataPoints(args);
+        Measurement.visualizeActualPower(args);
+
     }
 
     //! Globale Variablen:
@@ -51,8 +56,8 @@ public class Measurement {
             // Zweite schliefe die die minuten hochzählt 
             for (int j = 0; j < 3; j++) {
 
-                double currentDecimalDay = Math.round((dayOfYear + (HourOfDay + MinuteOfHour / 60.0) / 24.0)
-                        * 1000.0) / 1000.0;
+                double currentDecimalDay = dayOfYear + (HourOfDay + MinuteOfHour / 60.0) / 24.0
+                ;
                 // System.out.println("Neu berechneter Decimaltag: " + currentDecimalDay);
 
                 // Speichern des DecimalDays in Array 
@@ -97,28 +102,6 @@ public class Measurement {
 
     }
 
-    public static void visualizeActualPower(String[] args) {
-
-        // 1. Messwerte auslesen -> Für jeden Dezimaltag t gibt es ein t_0 und ein t_1. Für jedes t_0 gibt es ein y_0 und für jedes t_1 gitb es ein y_1. Zwischen diesen beiden werten muss interpoliert werden 
-        // 1.1 exakte Zeitpunkte der Messwerte auslesen 
-
-        // DataPoint dataPoint_1 = SunCalculator.getPrevious(SunCalculator.SOLAR, 293.0); 
-        // System.out.println(dataPoint_1);
-
-        // double dcimalDay_1 = dataPoint_1.getDecimalDay(); 
-        // System.out.println(dcimalDay_1);
-
-        // double value_1 = dataPoint_1.getValue(); 
-        // System.out.println(value_1);
-        // Aus dem Vorherigen Datenpunkt Decimaltag und Wert auslesen 
-        // double previousDecimalDay = previousDataPoint.getDecimalDay(); 
-        // System.out.println("Dezimaltag des vorherigen Datenpunktes: " + previousDecimalDay);
-
-        // double previousValue = previousDataPoint.getValue(); 
-        // System.out.println("Leistung des vorherigen Datenpunktes: " + previousValue);
-
-    }
-
     public static Object[][] dataPoints = new Object[73][2]; // 73 ist maximalgröße, immer 2 Werte! 
 
     public static void getSolarDataPoints(String[] args) {
@@ -131,61 +114,89 @@ public class Measurement {
         DataPoint currentDataPoint = null;
 
         currentDataPoint = SunCalculator.getPrevious(SunCalculator.SOLAR, decimalDays[0]);
-        System.out.println("Derzeitiger Datenpunkt: " + currentDataPoint);
-        
-        dataPoints[0] = new Object[]{currentDataPoint.getDecimalDay(), currentDataPoint.getValue()}; 
+        // System.out.println("Derzeitiger Datenpunkt: " + currentDataPoint);
 
-        System.out.println("Tatsächlicher Dezimaltag: " + (double) dataPoints[0][0]);
-        System.out.println("Tatsächlicher Wert: " + (double) dataPoints[0][1]);
+        dataPoints[0] = new Object[] { currentDataPoint.getDecimalDay(), currentDataPoint.getValue() };
+
+        // System.out.println("Tatsächlicher Dezimaltag: " + (double) dataPoints[0][0]);
+        // System.out.println("Tatsächlicher Wert: " + (double) dataPoints[0][1]);
 
         int entryNumber = 1;
         for (double decimalDay : decimalDays) {
             // Zeigt den vorherigen (bereits geladenen) Datenpunkt
-            System.out.println("Dezimaltag im Datenpunkt: " + (double) dataPoints[entryNumber - 1][0]);
-            
-            if (decimalDay < (double) dataPoints[entryNumber - 1][0]) { 
-                System.out.println("Dezimaltag wird uebersprungen! ");
-                continue; 
+            // System.out.println("Dezimaltag im Datenpunkt: " + (double) dataPoints[entryNumber - 1][0]); 
+
+            if (decimalDay < (double) dataPoints[entryNumber - 1][0]) {
+                // System.out.println("Dezimaltag wird uebersprungen! ");
+                continue;
             }
-        
+
             currentDataPoint = SunCalculator.getFollowing(SunCalculator.SOLAR, decimalDay);
-            dataPoints[entryNumber] = new Object[]{currentDataPoint.getDecimalDay(), currentDataPoint.getValue()}; 
-            
-            entryNumber++; 
+            dataPoints[entryNumber] = new Object[] { currentDataPoint.getDecimalDay(), currentDataPoint.getValue() };
+
+            entryNumber++;
         }
 
-        // // following data point des letzten Dezimaltages auslesen 
-        // // dataPoints[dataPoints.length -1] = SunCalculator.getFollowing(SunCalculator.SOLAR, decimalDays[decimalDays.length -1]); 
-
-        //* Komplettes Array anzeigen:
-        System.out.print("DataPoints: [");
-        for (int i = 0; i < dataPoints.length; i++) {
-            System.out.print(dataPoints[i]);
-            if (i < dataPoints.length - 1) {
-                System.out.print(", ");
-            }
-        }
+        // * Komplettes Array anzeigen:
+        // System.out.print("DataPoints: [");
+        // for (int i = 0; i < entryNumber; i++) {
+        //     System.out.print(dataPoints[i]);
+        //     if (i < entryNumber - 1) {
+        //         System.out.print(", ");
+        //     }
+        // }
 
         System.out.println("]");
-        System.out.println("Anzahl der Datenpunkten: " + dataPoints.length);
-        
-        
+        System.out.println("Anzahl der Datenpunkten: " + entryNumber);
+
         //! Anschließend können mit einer weiteren Methode die im Array gespeicherten Datenpunkte ausgelesen und verarbeitet (interpolation) werden. Die vizualizeActualPower MEthode kümmert sich dann nur noch ium das senden 
+    }
 
-        public static void interpolateDataPointEntrys(String[] args) {
+    public static void visualizeActualPower(String[] args) {
 
-            // Immer die beiden neben einander liegenden Werte auslesen und für die rechnung nutzen 
-            // Value auslesen und Decimaltag auslsen 
-            // interpolationsfaktor berechenen 
-            // Über interpolationsfaktor die eigentlichen Messwerte ausrechenen 
+        // Immer die beiden neben einander liegenden Werte auslesen und für die rechnung nutzen 
+        // Value auslesen und Decimaltag auslsen 
+        // interpolationsfaktor berechenen 
+        // Über interpolationsfaktor die eigentlichen Messwerte ausrechenen 
 
+        int counter = 0;
+        int entryNumber = 0;
+        int decimalDayNumber = 0;
 
+        for (double decimalDay : decimalDays) {
+
+            System.out.println("Anzhal der Schleifendurchlaeufe: " + counter);
+            double t = decimalDay;
+            double t_0 = (double) dataPoints[entryNumber][0];
+            double t_1 = (double) dataPoints[entryNumber + 1][0];
+
+            if (t > t_0 && t >= t_1) {
+                entryNumber++;
+                t_0 = (double) dataPoints[entryNumber][0];
+                t_1 = (double) dataPoints[entryNumber + 1][0];
+            }
+
+            System.out.println("t_0 = " + t_0);
+            System.out.println("t = " + t);
+            System.out.println("t_1= " + t_1);
+
+            double interpolationFactor = (t - t_0) / (t_1 - t_0);
+            System.out.println("Interpolationsfaktor: " + interpolationFactor);
+
+            double y_0 = (double) dataPoints[entryNumber][1];
+            double y_1 = (double) dataPoints[entryNumber + 1][1];
+
+            double interpolatedValue = (y_1 - y_0) * interpolationFactor + y_0;
+            System.out.println("Interpolierter Datenwert: " + interpolatedValue);
+
+            ResultPrinter.sendSolarProduction(t, interpolatedValue);
+            System.out.println("Wert gesendet! ");
+            counter++;
         }
-        
         /*
         * ==============================================================================================================
         * BIS HIER KOPIEREN 
         */
-        
+
     }
 }
