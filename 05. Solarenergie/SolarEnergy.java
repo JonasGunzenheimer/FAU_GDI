@@ -152,15 +152,15 @@ public class SolarEnergy {
             MinuteOfHour = 0;
         }
 
-        //* Komplettes Array anzeigen:
-        System.out.print("Dezimaltage: [");
-        for (int i = 0; i < decimalDays.length; i++) {
-            System.out.print(decimalDays[i]);
-            if (i < decimalDays.length - 1) {
-                System.out.print(", ");
-            }
-        }
-        System.out.println("]");
+        // //* Komplettes Array anzeigen:
+        // System.out.print("Dezimaltage: [");
+        // for (int i = 0; i < decimalDays.length; i++) {
+        //     System.out.print(decimalDays[i]);
+        //     if (i < decimalDays.length - 1) {
+        //         System.out.print(", ");
+        //     }
+        // }
+        // System.out.println("]");
 
         ResultPrinter.sendSolarEnergy(totalSolarEnergy);
         // System.out.println("Gesamte Solarenergie:" + totalSolarEnergy);
