@@ -31,6 +31,7 @@ public class Quilt {
         quiltData.testRandomQuilt(quilt);
         
         Quilt.fixQuilt(quilt, colorData);
+        System.out.println("Anzahl der Durchlaufe: " + durchlaeufe);
         Quilt.showQuilt(quilt);
         quiltData.testFinalQuilt(quilt); 
     }
@@ -126,12 +127,19 @@ public class Quilt {
         // System.out.println("Anzhal an verfuegbaren Karten zu Ende: " + colorSum);
     }
 
+    public static int durchlaeufe = 0; 
+
     public static void fixQuilt(int[][] quilt, int[] colors) {
-        for (int i = 0; i < quilt.length; i ++ ) {
-            for (int j = 0; j < quilt[i].length; j++) {
-                if (!fixPatch(quilt, colors, i, j)){ // wenn fix pat
-                    fixQuilt(quilt, colors); 
-                }; 
+        boolean hasConflicts = true;
+        while (hasConflicts) {
+            durchlaeufe++; 
+            hasConflicts = false;
+            for (int i = 0; i < quilt.length; i++) {
+                for (int j = 0; j < quilt[i].length; j++) {
+                    if (!fixPatch(quilt, colors, i, j)) {
+                        hasConflicts = true;
+                    }
+                }
             }
         }
     }
