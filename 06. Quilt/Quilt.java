@@ -31,7 +31,7 @@ public class Quilt {
         quiltData.testRandomQuilt(quilt);
         
         Quilt.fixQuilt(quilt, colorData);
-        System.out.println("Anzahl der Durchlaufe: " + durchlaeufe);
+        // System.out.println("Anzahl der Durchlaufe: " + durchlaeufe);
         Quilt.showQuilt(quilt);
         quiltData.testFinalQuilt(quilt); 
     }
