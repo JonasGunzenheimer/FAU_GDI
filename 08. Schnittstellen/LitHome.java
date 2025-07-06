@@ -206,16 +206,18 @@ class Switch implements Switchable {
 class SimpleLight implements Switchable {
 
     private final LightAdapter lightadapter;
-    private final boolean isOn;
+    private boolean isOn;
 
     @Override
     public void turnOn() {
         this.lightadapter.send(true);
+        this.isOn = true;
     }
 
     @Override
     public void turnOff() {
         this.lightadapter.send(false);
+        this.isOn = false;
     }
 
     @Override
