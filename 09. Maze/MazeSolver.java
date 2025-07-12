@@ -24,7 +24,7 @@ public class MazeSolver {
         }
     }
 
-    public static boolean solveMaze(boolean[][] maze, Position pos, Path path) {
+    private static boolean solveMaze(boolean[][] maze, Position pos, Path path) {
 
         // * Null-Checks: Wurde maze übergeben? Wurde pos übergeben? Wurde path übergeben? 
         if (maze == null || pos == null || path == null) {
@@ -32,8 +32,8 @@ public class MazeSolver {
         }
 
         // # Debugging 
-        System.out.println("solveMaze wurde aufgerufen!");
-        System.out.println("Position: " + pos.row + "/" + pos.column);
+        // System.out.println("solveMaze wurde aufgerufen!");
+        // System.out.println("Position: " + pos.row + "/" + pos.column);
 
         // * Szenario 1: Übergebene Position ist der Ausgang! (liegt außerhalb der 2x2 Matrix) 
         if (pos.row < 0 || pos.row >= maze.length ||
@@ -62,11 +62,10 @@ public class MazeSolver {
         Position right = new Position(pos.row, pos.column + 1); // # Rechter Nachbar 
 
         // # alle Nachbarn nach einander testen 
-        if (
-            solveMaze(maze, left, path) ||
-            solveMaze(maze, up, path) || // ! Solve Maze kann in zu diesem Zeitpunkt nur true zurück geben, wenn ein Ausgang gefunden wurde 
-            solveMaze(maze, down, path) ||
-            solveMaze(maze, right, path)) {
+        if (solveMaze(maze, up, path) || // ! Solve Maze kann in zu diesem Zeitpunkt nur true zurück geben, wenn ein Ausgang gefunden wurde 
+                solveMaze(maze, down, path) ||
+                solveMaze(maze, left, path) ||
+                solveMaze(maze, right, path)) {
             return true; // * Wenn Ausgangn gefunden wurde, true zurückgeben 
         }
 
