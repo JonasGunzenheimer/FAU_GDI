@@ -1,5 +1,3 @@
-// KEINE IMPORTS für Path und Position - diese sind in der Aufgabe definiert!
-
 public class MazeSolver {
     public static void main(String[] args) {
         Manager manager = new Manager(args);
