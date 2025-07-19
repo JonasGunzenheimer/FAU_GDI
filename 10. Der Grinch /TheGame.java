@@ -19,9 +19,10 @@ public class TheGame {
 
         }
 
-        @Override // * Für mich als Hinﬁ´weis "Das ist eine zu einem interface gehörende Methode!"
+        @Override // * Für mich als Hinweis "Das ist eine zu einem interface gehörende Methode!"
         public void onClick(int column, int row) {
-            if (this.snowWorld.patchOnTile(column, row) == null) {
+            SnowPatch currentPatch = this.snowWorld.patchOnTile(column, row);
+            if (currentPatch == null) {
                 this.snowWorld.createSnowPatchAt(column, row);
             } else {
                 this.melt(column, row, 0.0);
@@ -65,9 +66,17 @@ public class TheGame {
                 int currentColumn = neighbor[0];
                 int currentRow = neighbor[1];
 
+                // ! Auch neu generierte Nachbarn brauchen boundary Checks! 
+                if (currentRow < 0 || currentRow >= this.snowWorld.rows ||
+                        currentColumn < 0 || currentColumn >= this.snowWorld.columns) {
+                    continue;
+                }
+
+                // # wenn boundary-Chekcs abgeschlossen, neuen patch zum prüfen erstellen 
                 SnowPatch neighboringPatch = this.snowWorld.patchOnTile(currentColumn, currentRow);
+
                 // # ist auf dem Feld eine Schneefigur? 
-                if (neighboringPatch == null) { // ? klappt auch für Felder auserhalb der Welt ? 
+                if (neighboringPatch == null) {
                     continue;
                 }
 
