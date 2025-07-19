@@ -106,17 +106,23 @@ public class TheGame {
             int[] randomPatch = new int[2];
             randomPatch[0] = (int) (Math.random() * (currentGame.snowWorld.columns));
             randomPatch[1] = (int) (Math.random() * (currentGame.snowWorld.rows));
-            return randomPatch; 
+            return randomPatch;
         }
 
         @Override
         public void didEnterTile(int column, int row) { // # Wird automatisch von der Spielwelt aufgerufen, wenn die Figur ein neues Feld betritt.
+            this.currentGame.melt(column, row, 0.0); 
         }
 
         @Override
         public void didStopWalking(int column, int row) { // # Wird automatisch von der Spielwelt aufgerufen, wenn die Figur mit addToTile in die Spielwelt aufgenommen wurde oder das mit walkTo festgelegte Zielfeld erreicht hat.
+            int[] currentPatch = { column, row };
 
+            // * Spielfigur zu einem randomPatch laufen lassen 
+            int[] randomPatch = getRandomPatch();
+            this.actingFigure_1.walkTo(randomPatch[0], randomPatch[1]);
         }
+
     }
 
 }
